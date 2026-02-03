@@ -1,0 +1,12 @@
+--------------------------------------------
+-- generated with dist/build-distinfo.rua --
+--------------------------------------------
+
+name = "query-simbad"
+files = {
+	"query-simbad.lua",
+}
+deps = {
+	"ext",
+	"url",
+}

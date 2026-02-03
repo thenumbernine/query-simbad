@@ -4,16 +4,16 @@ return function(query)
 	local socket = require 'socket'
 	local http = require 'socket.http'
 	local json = require 'dkjson'
-	
-	local url = socket.url.build{
+	local URL = require 'url'
+	local url = URL{
 		scheme = 'http',
 		host = 'simbad.u-strasbg.fr',
-		path = '/simbad/sim-tap/sync',
+		path = 'simbad/sim-tap/sync',
 		-- why a table of tables?  because lang must come second...
-		query = table{
-			{request = 'doQuery'},
-			{lang = 'adql'},
-			{format = 'json'},	-- votable, json, csv, tsv, text
+		query = {
+			{'request', 'doQuery'},
+			{'lang', 'adql'},
+			{'format', 'json'},	-- votable, json, csv, tsv, text
 			-- also don't forget to 
 			-- example:
 			--{query = ('SELECT TOP 10 MAIN_ID,RA,DEC FROM BASIC WHERE rvz_redshift > 3.3')},
@@ -25,13 +25,9 @@ return function(query)
 			--{query = "select oidref,id from ident where id='00424433+4116074'"}, -- 2MRS ID doesn't work for ident.id ...
 			--{query = "select oidref,id from ident where id='1991RC3.9.C...0000d'"}, -- how about vsrc? nope.
 			--{query = "select oidref,dist,unit,minus_err,plus_err from mesDistance where oidref=1575544"},	-- this is the ID it gives back
-			{query = query},
-		}:map(function(l)
-			local k=next(l)
-			local v = socket.url.escape(l[k])
-			return k..'='..v
-		end):concat('&'),
-	}
+			{'query', query},
+		},
+	}:tostring()
 	--print(url)
 	local result = {socket.http.request(url)}
 	--print(table.unpack(result))
